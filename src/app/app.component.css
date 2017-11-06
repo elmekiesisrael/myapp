@@ -1,0 +1,21 @@
+.blur {
+    filter: blur(11px);
+    pointer-events: none;
+    cursor: default;
+}
+
+.authentication {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 45%;
+    padding-top: 14%;
+}
+
+
+.submit-wrapper {
+    padding-top: 15px;
+}

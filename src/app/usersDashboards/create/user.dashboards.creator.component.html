@@ -1,0 +1,22 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">Select user with the following attributes:</h4>
+                </div>
+
+                <ul>
+                    <li *ngFor="let attribute of userAttributes">
+                        {{attribute.title}}
+                        <ul *ngFor="let predicate of predicates">
+                            <li>{{predicate.name}}</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+</div>

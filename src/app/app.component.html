@@ -1,0 +1,19 @@
+<div class="wrapper" [ngClass]="{ 'blur': !wasAuthenticationSuccessful }">
+    <div class="sidebar" data-background-color="white" data-active-color="danger">
+        <sidebar-cmp></sidebar-cmp>
+    </div>
+    <div class="main-panel">
+        <navbar-cmp></navbar-cmp>
+        <div class="content">
+            <router-outlet></router-outlet>
+        </div>
+        <footer-cmp></footer-cmp>
+    </div>
+</div>
+
+<div class="authentication" (show)="wasAuthenticationSuccessful">
+   <h2>Welcome</h2>
+    <h5>Please Enter Your Token</h5>
+    <div><input type="text" class="form-control border-input" [(ngModel)]="token"></div>
+    <div class="submit-wrapper"><button class="btn btn-default" (click)="authenticate()">Login</button></div>
+</div>
