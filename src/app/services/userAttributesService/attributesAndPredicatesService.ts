@@ -1,5 +1,14 @@
 import {Injectable} from "@angular/core";
 import {Http} from "@angular/http";
+import {AndPredicate} from "../../model/predicates/andPredicate";
+import {DatePredicate} from "../../model/predicates/datePredicate";
+import {EqualsPredicate} from "../../model/predicates/equalsPredicate";
+import {GreaterThenPredicate} from "../../model/predicates/greaterThenPredicate";
+import {IDPredicate} from "../../model/predicates/idPredicate";
+import {LessThenPredicate} from "../../model/predicates/lessThenPredicate";
+import {NotPredicate} from "../../model/predicates/notPredicate";
+import {TruePredicate} from "../../model/predicates/truePredicate";
+import {PredicateType} from "../../model/predicates/predicateTypes";
 
 declare interface Attribute {
     name: string,
@@ -11,39 +20,20 @@ export class AttributesAndPredicatesService {
 
     constructor(private http: Http) {}
 
-    getAttributesAndPredicatesTypes() {
-        return {
-            attributes: [
-                { name: 'Boolean', type: 'boolean', possiblePredicates: [1, 3, 4, 8, 9, 10] },
-                { name: 'Integer', type: 'int', possiblePredicates: [3, 4, 6, 7, 8, 9, 10] },
-                { name: 'Any Number', type: 'float', possiblePredicates: [3, 4, 6, 7, 8, 9, 10] },
-                { name: 'Text', type: 'string', possiblePredicates: [2, 3, 4, 5, 8, 9, 10] },
-                { name: 'Date', type: 'date', possiblePredicates: [5, 10] },
-            ],
-
-            predicates: [
-                { id: 1, name: 'Is True' },
-                { id: 2, name: 'ID Is' },
-                { id: 3, name: 'Equals'},
-                { id: 4, name: 'Is Not'},
-                { id: 5, name: 'Date Between'},
-                { id: 6, name: 'Greater Then'},
-                { id: 7, name: 'Less Then'},
-                { id: 8, name: 'And'},
-                { id: 9, name: 'Or' },
-                { id: 10, name: '+'}
-            ]
-        }
-    }
-
 
     getUserAttributes() {
         return [
-            { name: 'userName', title: 'User Name', type: 'string' },
-            { name: 'age', title: 'Age', type: 'int' },
-            { name: 'dateCreated', title: 'Created On', type: 'date' },
+            {name: 'id', title: 'ID', type: PredicateType.id},
+            {name: 'userName', title: 'User Name', type: PredicateType.strAttr},
+            {name: 'age', title: 'Age', type: PredicateType.intAttr},
+            {name: 'dateCreated', title: 'Created On', type: PredicateType.date},
+            {name: 'address', title: 'Address', type: PredicateType.strAttr},
+            {name: 'dateModified', title: 'Last Modified', type: PredicateType.date},
+            {name: 'avgEntriesDaily', title: 'Daily Entries on Average', type: PredicateType.floatAttr},
+            {name: 'gender', title: 'Gender', type: PredicateType.strAttr},
+            {name: 'phoneNumber', title: 'Phone Number', type: PredicateType.intAttr},
+            {name: 'siblings', title: 'Siblings', type: PredicateType.intAttr},
+            {name: 'spentMoney', title: 'Spent Money?', type: PredicateType.boolAttr},
         ]
     }
-
-
 }

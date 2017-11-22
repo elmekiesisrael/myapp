@@ -11,14 +11,18 @@ export interface RouteInfo {
 }
 
 export const ROUTES: RouteInfo[] = [
-    { path: 'users/dashboards/get', title: 'Users Dashboards',  icon:'ti-panel', class: '', displayInSidebar: true},
-    { path: 'users/dashboards/create', title: 'Create Users Dashboards',  icon:'ti-panel', class: '',displayInSidebar: false },
-    { path: 'events/dashboards/get', title: 'Events Dashboards',  icon: 'ti-panel', class: '', displayInSidebar: true },
+    { path: 'users/dashboards/get', title: 'Users Metrics',  icon:'fa fa-id-card-o', class: '', displayInSidebar: true},
+    { path: 'users/dashboards/create/', title: 'Create a User Metric',  icon:'ti-panel', class: '',displayInSidebar: false },
+    { path: 'users/dashboards/create/spread', title: 'Create a spreeded User Metric',  icon:'ti-panel', class: '',displayInSidebar: false },
+    { path: 'users/dashboards/create/*', title: 'Edit Metric',  icon:'ti-panel', class: '',displayInSidebar: false },
+    { path: 'events/dashboards/get', title: 'Events Matrices',  icon: 'ti-panel', class: '', displayInSidebar: true },
+    { path: 'dashboard', title: 'Dashboard',  icon: 'ti-panel', class: '', displayInSidebar: false },
     { path: 'table', title: 'Table List',  icon:'ti-view-list-alt', class: '', displayInSidebar: false },
     { path: 'typography', title: 'Typography',  icon:'ti-text', class: '', displayInSidebar: false },
     { path: 'icons', title: 'Icons',  icon:'ti-pencil-alt2', class: '', displayInSidebar: false },
     { path: 'maps', title: 'Maps',  icon:'ti-map', class: '', displayInSidebar: false },
     { path: 'notifications', title: 'Notifications',  icon:'ti-bell', class: '', displayInSidebar: false },
+
 ];
 
 @Component({

@@ -8,12 +8,13 @@ import { NotificationsComponent }   from './notifications/notifications.componen
 import { UpgradeComponent }   from './upgrade/upgrade.component';
 import { UserDashboards } from "./usersDashboards/get/user.dashboards.getter.component";
 import { UsersDashboardCreatorComponent } from "./usersDashboards/create/user.dashboards.creator.component";
+import {UserDashboardsLoaderComponent} from "./usersDashboards/load/user.dashboards.loader.component";
+import {DashboardComponent} from "./dashboard/dashboard.component";
 
 export const AppRoutes: Routes = [
     {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
+        path: 'dashboard',
+        component: DashboardComponent,
     },
     {
         path: 'users/dashboards/get',
@@ -44,7 +45,11 @@ export const AppRoutes: Routes = [
         component: UpgradeComponent
     },
     {
-        path: 'users/dashboards/create',
+        path: 'users/dashboards/create/:id',
         component: UsersDashboardCreatorComponent
+    },
+    {
+        path: 'users/dashboards/load',
+        component: UserDashboardsLoaderComponent
     }
-]
+];

@@ -1,0 +1,155 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 650px;
+}
+
+.explanation-title {
+    padding-top: 20px;
+}
+
+.operation-button-icon {
+    color: white;
+    padding-right: 10px;
+    font-weight: normal;
+}
+
+.operation-button-icon:hover {
+    color: white;
+}
+
+.user-input {
+    height: 40px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    width: 180px;
+}
+
+.dashboard-title {
+    font-size: xx-large;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.query-results {
+    padding: 20px 20px 20px 20px;
+}
+
+.operations {
+    display: flex;
+}
+
+.operation-button {
+    padding: 20px 20px 20px 20px;
+}
+
+.predicate-wrapper {
+    display: flex;
+    padding-bottom: 20px;
+}
+
+.predicate-component {
+    padding-right: 20px;
+}
+
+.datepicker {
+    padding-top: 2px;
+    width: 204px;
+}
+
+my-date-picker input {
+    background-color: #00bbff !important;
+}
+
+.predicate-icons {
+    font-size: x-large;
+}
+
+.operator-between {
+  padding-top: 5px;
+  padding-left: 2px;
+}
+
+.add-remove-wrapper {
+    padding-left: 20px;
+    padding-top: 16px;
+}
+
+.all-pres-and-op {
+    display: flex;
+    align-items: center;
+}
+
+.between-segments {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 20px;
+}
+
+.btn-between-segments {
+    padding-top: 21px;
+    padding-left: 14px;
+}
+
+.all-segments {
+    padding-top: 20px;
+    padding-left: 20px;
+}
+
+i {
+    color: darkgrey;
+    font-weight: normal;
+}
+
+i.add:hover {
+    color: limegreen;
+    font-weight: 900;
+}
+
+i.remove:hover {
+    color: orangered;
+    font-weight: 900;
+}
+
+.statistics {
+    font-size: large;
+    padding-bottom: 20px;
+}
+
+.predicate-logical-operator {
+    align-self: baseline;
+    padding-left: 30px;
+}
+
+select {
+    border: 1px solid #CCC5B9;
+    -webkit-border-radius: 0px;
+    height: 40px;
+    background-color: #FFFCF6;
+    font-size: initial;
+}
+
+.fade-in {
+    opacity: 1;
+    animation: fade 2s linear;
+}
+
+
+@keyframes fade {
+    0% { opacity: 0 }
+    100% { opacity: 1 }
+}
+
+
+.spread-by-select {
+    width: 200px;
+}
+
+.spread-by-span {
+    padding-left: 10px;
+    padding-right: 10px;
+}

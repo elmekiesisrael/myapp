@@ -1,31 +1,63 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="header" style="padding-bottom: 8px;">
-                    <a [routerLink]="[pathToCreatorComponent]">
-
-                        <h4 class="title">
-                            <i class="ti-plus"></i>
-                            <span style="padding-left: 5px;">Create a new dashboard</span>
-                        </h4>
-                    </a>
-                </div>
-                <div class="content table-responsive table-full-width">
-                    <table class="table table-striped">
-                        <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th *ngFor="let cell of tableData1.headerRow">{{ cell }}</th>-->
-                            <!--</tr>-->
-                        <!--</thead>-->
-                        <tbody>
-                            <tr *ngFor="let dashboard of dashboards">
-                                <td><a href="#">{{dashboard.name}}</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
+        <div class="col-md-6" style="margin-bottom: 20px;">
+            <a [routerLink]="[pathToCreatorComponent, '']">
+                <button class="btn btn-sm  btn-icon"><i class="fa fa-plus"></i></button>
+            </a>
+            <button class="btn btn-sm btn-default btn-icon"><i class="fa fa-line-chart"></i></button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6" *ngFor="let metric of allMatrices">
+            <div class="card" *ngIf="metric.type === 'regular'">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="icon-big icon-success text-center">
+                                <i class="ti-pie-chart"></i>
+                            </div>
+                        </div>
+                        <div class="col-xs-7">
+                            <div class="numbers">
+                                <p>{{metric.title}}</p>
+                                {{metric.lastResult}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <a [routerLink]="[pathToCreatorComponent, metric.id]">
+                                <i class="fa fa-pencil edit-icon" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row" *ngFor="let metric of spreadMatrices">
+        <div class="col-lg-8 col-sm-6">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">{{metric.title}}</h4>
+                    <p class="category">Spread by <b>{{metric.spreadBy}}</b> attribute</p>
+                </div>
+                <div class="content">
+                    <div [id]="metric.id">
+                        <div>
+                            <div style="display: block">
+                                <canvas baseChart
+                                        [datasets]="metric.data"
+                                        [labels]="metric.labels"
+                                        [options]="{ scaleShowVerticalLines: false, responsive: true }"
+                                        [legend]="'true'"
+                                        [chartType]="'bar'"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

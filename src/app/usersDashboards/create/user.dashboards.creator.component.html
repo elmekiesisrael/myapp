@@ -1,22 +1,148 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card dashboard">
                 <div class="header">
-                    <h4 class="title">Select user with the following attributes:</h4>
+                    <input class="dashboard-title" type="text" [(ngModel)]="metric.title"/>
+                    <h4 class="title explanation-title">Select metric type</h4>
+
+                    <!-- Metric Type -->
+                    <select [(ngModel)]="metric.type" type="text" class="spread-by-select">
+                        <option selected [ngValue]="'regular'">Regular</option>
+                        <option [ngValue]="'spread'">Spread</option>
+                    </select>
+
+                    <!-- If spread - select the spreadBy value -->
+                    <span class="spread-by-span" *ngIf="metric.type === 'spread'">by attribute</span>
+                    <select *ngIf="metric.type === 'spread'" [(ngModel)]="metric.spreadBy" type="text" class="spread-by-select">
+                        <option *ngFor="let attr of attributesList" [ngValue]="attr.name">
+                            {{attr.title}}
+                        </option>
+                    </select>
+
+                    <h4 class="title explanation-title">Select user with the following attributes:</h4>
                 </div>
+                <div class="all-segments">
+                    <div *ngFor="let segment of metric.segments; let i = index" [ngStyle]="{ 'padding-left.px': i * 40}">
+                        <div class="all-pres-and-op">
+                            <div>
+                                <div *ngFor="let pred of segment.predicates; let j = index" class="predicate-wrapper">
+                                    <!-- Key selector -->
+                                    <div class="predicate-component">
+                                        <select type="text" [(ngModel)]="metric.segments[i].predicates[j].key">
+                                            <option *ngFor="let attr of attributesList" [ngValue]="attr.name">
+                                                {{attr.title}}
+                                            </option>
+                                        </select>
+                                    </div>
 
-                <ul>
-                    <li *ngFor="let attribute of userAttributes">
-                        {{attribute.title}}
-                        <ul *ngFor="let predicate of predicates">
-                            <li>{{predicate.name}}</li>
-                        </ul>
-                    </li>
-                </ul>
+                                    <!-- Predicate type selector -->
+                                    <div class="predicate-component">
+                                        <select type="text" style="min-width: 184px;"
+                                                [(ngModel)]="metric.segments[i].predicates[j].type">
+                                            <option selected>Select</option>
+                                            <option *ngFor="let value of getPredicatesByAttributeName(metric.segments[i].predicates[j].key)" [ngValue]="value.type">
+                                                {{value.name}}
+                                            </option>
+                                        </select>
+                                    </div>
 
+                                    <!-- Value insertion -->
+                                    <div class="predicate-component"
+                                         *ngIf="metric.segments[i].predicates[j].type !== 'true' && metric.segments[i].predicates[j].type !== 'date'">
+                                        <input class="form-control border-input"
+                                               [type]="getInputTypeByKey(i, j)"
+                                               [(ngModel)]="metric.segments[i].predicates[j].value.value"/>
+                                    </div>
+
+                                    <!-- Date value insertion -->
+                                    <div class="predicate-component datepicker"
+                                         *ngIf="metric.segments[i].predicates[j].type === 'date'">
+                                        <form #myForm="ngForm" novalidate>
+                                            <my-date-picker name="from"
+                                                            [options]="myDatePickerOptions"
+                                                            (dateChanged)="onDateChanged($event, i, j, true)"
+                                                            [(ngModel)]="metric.segments[i].predicates[j].first"
+                                                            required>
+                                            </my-date-picker>
+                                            <my-date-picker name="to"
+                                                            [options]="myDatePickerOptions"
+                                                            (dateChanged)="onDateChanged($event, i, j, false)"
+                                                            [(ngModel)]="metric.segments[i].predicates[j].second"
+                                                            required>
+                                            </my-date-picker>
+                                        </form>
+                                    </div>
+
+                                    <!-- Add Remove Predicates Buttons -->
+                                    <div class="predicate-component predicate-icons">
+                                        <i class="fa fa-plus-circle add" aria-hidden="true"
+                                           (click)="addPredicate(i, j)"></i>
+                                    </div>
+                                    <div class="predicate-component predicate-icons">
+                                        <i class="fa fa-minus-circle remove-btn remove" aria-hidden="true"
+                                           *ngIf="segment.predicates.length > 1" (click)="removePredicate(i, j)"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Operator between predicates selector -->
+                            <div class="predicate-logical-operator">
+                                <select type="text"
+                                        *ngIf="segment.predicates.length > 1"
+                                        [(ngModel)]="metric.segments[i].operator">
+                                    <option *ngFor="let op of operationsList" [ngValue]="op.type">{{op.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="between-segments">
+                            <!-- Add remove segment buttons -->
+                            <div class="predicate-component">
+                                <i class="fa fa-plus-circle predicate-icons add" aria-hidden="true"
+                                   (click)="addSegment(i)"
+                                   *ngIf="!metric.segments[i + 1]">
+                                </i>
+
+                                <i class="fa fa-minus-circle predicate-icons remove" aria-hidden="true"
+                                   (click)="removeSegment(i)"
+                                   *ngIf="metric.segments[i + 1]">
+                                </i>
+
+                                <!-- Operator between segments selector -->
+                                <select type="text" style="margin-left: 14px;"
+                                        *ngIf="metric.segments[i + 1]"
+                                        [(ngModel)]="metric.opsBetweenSegments[i]">
+                                    <option *ngFor="let op of operationsList" [ngValue]="op.type">{{op.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1;"></div>
+                <div class="operations">
+                    <div class="operation-button">
+                        <button class="btn btn-info btn-fill btn-wd" (click)="calculate()"><i
+                                class="ti-control-play operation-button-icon"></i>Calculate
+                        </button>
+                    </div>
+                    <div class="operation-button">
+                        <button (click)="showSaveDashboardNotification()" class="btn btn-info btn-fill btn-wd"><i
+                                class="ti-save operation-button-icon"></i>Save
+                        </button>
+                    </div>
+                </div>
+                <div class="query-results">
+                    <div *ngIf="isCalculating">
+                        <img height="80" width="80" src="assets/img/animation.gif" alt="..."/>
+                    </div>
+                    <div *ngIf="showResults" class="fade-in">
+                        <div><h4 class="title">Total Users: 423</h4></div>
+                        <div><h4 class="title">Query Result: 132</h4></div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>

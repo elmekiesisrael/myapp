@@ -20,14 +20,16 @@ import { IconsComponent }   from './icons/icons.component';
 import { NotificationsComponent }   from './notifications/notifications.component';
 import { UpgradeComponent }   from './upgrade/upgrade.component';
 import { UsersDashboardCreatorComponent } from "./usersDashboards/create/user.dashboards.creator.component";
-import {DashboardsService} from "./services/dashboardsService/dashboardsService";
+import {MetricsService} from "./services/metricsService/metricsService";
 import { HttpModule } from '@angular/http';
 import { AttributesAndPredicatesService } from './services/userAttributesService/attributesAndPredicatesService';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {QuerySegmentComponent} from "./querySegment/query.segment.component";
 import {AuthenticationService} from "./services/authenticationService/authenticationService";
+import {UserDashboardsLoaderComponent} from "./usersDashboards/load/user.dashboards.loader.component";
+import { MyDatePickerModule } from 'mydatepicker';
 
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -42,7 +44,7 @@ import {AuthenticationService} from "./services/authenticationService/authentica
     UpgradeComponent,
     UserDashboards,
     UsersDashboardCreatorComponent,
-    QuerySegmentComponent
+    UserDashboardsLoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,10 +56,12 @@ import {AuthenticationService} from "./services/authenticationService/authentica
     HttpModule,
     Ng2DropdownModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    MyDatePickerModule,
+    ChartsModule
   ],
   providers: [
-    DashboardsService,
+    MetricsService,
     AttributesAndPredicatesService,
     AuthenticationService
   ],

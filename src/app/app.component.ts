@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
     constructor(private authenticationService: AuthenticationService) {}
 
     ngOnInit() {
-        this.wasAuthenticationSuccessful = false;
+        this.wasAuthenticationSuccessful = true;
+
     }
 
     authenticate() {
