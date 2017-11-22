@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Http, Headers, RequestOptions} from "@angular/http";
+import {Http, Headers, RequestOptions, Response} from "@angular/http";
 import {PredicateType} from "../../model/predicates/predicateTypes";
 import 'rxjs/add/operator/map';
 import {Predicate} from "../../model/predicates/predicate";
@@ -11,6 +11,8 @@ export class MetricsService {
 
     calculateMetric(predicate: Predicate) {
         console.log(JSON.stringify(predicate.toJson()));
+        let res = this.http.get(`https://conduit.productionready.io/api/profiles/eric`).map((res:Response) => res.json());
+        console.log(res);
         return {};
     }
 
