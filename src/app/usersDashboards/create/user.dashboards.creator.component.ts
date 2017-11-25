@@ -7,6 +7,7 @@ import {ActivatedRoute} from "@angular/router";
 import {IMyDpOptions, IMyDateModel, IMyDate} from "mydatepicker";
 import {SpreadMetric} from "../../model/predicates/spreadMetric";
 import {Predicate} from "../../model/predicates/predicate";
+import {Debugger} from "../../services/debugger/debugger";
 
 
 // ------------------------------- Inner model representing the metric for UI purposes ----------------------------//
@@ -63,7 +64,7 @@ export class UsersDashboardCreatorComponent implements OnInit {
     private padding: number;
     private metricType: string;
     private metricSpreadBy: string;
-
+    private calculatedMetric;
 
     private attributesList;
     private predicateTypes;
@@ -88,37 +89,64 @@ export class UsersDashboardCreatorComponent implements OnInit {
         this.isCalculating = false;
         this.showResults = false;
         this.metricType = 'regular';
-        this.attributesList = this.attributesService.getUserAttributes();
+
+        Debugger.info('Getting list of user attributes');
+        this.attributesService.getUserAttributes()
+            .subscribe(
+                attributesList => {
+                    Debugger.info('Successfully retrieved list of user attributes');
+                    this.attributesList = attributesList;
+                    this.createAttributesAndPredicateTypesMap();
+                },
+                err => {
+                    Debugger.error('Failed to get list of shallow metrics. Error - ' + err);
+                    this.showMsg('danger', 'Failed to load attributes list.')
+                }
+            );
+
         this.operationsList = PredicateFactory.getOperations();
         this.predicateTypes = PredicateFactory.getAllPredicateTypes();
         this.padding = 0;
 
-        this.attributesAndPredicatesTypesMap = {};
-
-        // Create a mapping between attributes (field names) to their possible predicate types.
-        // I.e. If a field is string, we will only show the 'Equals' and 'Is Not' predicates.
-        // If int then 'Greater then', 'Less Then' etc...
-        this.attributesList.map((attr) => {
-            this.attributesAndPredicatesTypesMap[attr.name] = PredicateFactory.getPredicatesByType(attr.type)
-        });
-
 
         // If we were routed here using an id, fetch the metric from the BE by that id.
         if (this.route.params['value'].id) {
-            this.metric = this.metricsService.getMetricById(this.dashboardId);
-        }
-
-        // If not routed here by id, or fetch failed, use the empty default metric.
-        if (!this.metric) {
+            Debugger.info('Getting metric with id ' + this.dashboardId);
+            this.metricsService.getMetricById(this.dashboardId).subscribe(
+                metric => {
+                    Debugger.info('Successfully retrieved user metric');
+                    this.metric = metric
+                },
+                err => {
+                    Debugger.info('Failed retrieving metric. Error - ' + err);
+                    this.showMsg('danger', 'Failed to load metric');
+                    this.metric = this.metricsService.getDefaultMetric();
+                }
+            );
+        } else {
+            Debugger.info('Routed to create new metric (No ID). Getting default metric');
             this.metric = this.metricsService.getDefaultMetric();
         }
     }
 
+    createAttributesAndPredicateTypesMap() {
+        // Create a mapping between attributes (field names) to their possible predicate types.
+        // I.e. If a field is string, we will only show the 'Equals' and 'Is Not' predicates.
+        // If int then 'Greater then', 'Less Then' etc...
+        Debugger.debug('UsersDashboardCreatorComponent.createAttributesAndPredicateTypesMap() - Creating mapping between attributes and possible predicates.')
+        this.attributesAndPredicatesTypesMap = {};
+        this.attributesList.map((attr) => {
+            this.attributesAndPredicatesTypesMap[attr.name] = PredicateFactory.getPredicatesByType(attr.type)
+        });
+    }
+
     removePredicate(segmentId, predicateId) {
+        Debugger.debug('UsersDashboardCreatorComponent.removePredicate() - Removing predicate with indexes (' + segmentId + ',' + predicateId + ')');
         this.metric.segments[segmentId].predicates.splice(predicateId, 1);
     }
 
     removeSegment(segmentId) {
+        Debugger.debug('UsersDashboardCreatorComponent.removeSegment() - Removing segment with index (' + segmentId + ')');
         this.metric.segments.splice(segmentId + 1, 1);
         this.metric.opsBetweenSegments.splice(segmentId, 1);
     }
@@ -128,6 +156,8 @@ export class UsersDashboardCreatorComponent implements OnInit {
      * @param segmentId - Where to insert it.
      */
     addSegment(segmentId) {
+        Debugger.debug('UsersDashboardCreatorComponent.addSegment() - Adding new segment in index (' + segmentId +')');
+
         let newSegment: ISegment = {
             predicates: [],
             operator: PredicateType.and
@@ -144,6 +174,8 @@ export class UsersDashboardCreatorComponent implements OnInit {
      * @param predicateId - The predicate index. Where to insert it inside the segment.
      */
     addPredicate(segmentId, predicateId) {
+        Debugger.debug('UsersDashboardCreatorComponent.addPredicate() - Adding new predicate in indexes (' + segmentId + ',' + predicateId + ')');
+
         let newPredicate: IPredicate = {
             type: undefined,
             key: undefined,
@@ -168,25 +200,26 @@ export class UsersDashboardCreatorComponent implements OnInit {
             this.showResults = false;
             this.isCalculating = true;
             let req: Predicate = this.calculateAllSegments(0);
-            let res;
+            this.metricsService.calculateMetric(req).subscribe(
+                result => {
+                    this.doneCalculating()
+                    this.calculatedMetric = result;
+                },
+                err => this.showMsg('danger', 'Failed to calculate metric.')
+            );
+
             if (this.metricType === 'regular') {
                 this.metricsService.calculateMetric(req);
-                console.log(this.metric);
             }
 
             if (this.metricType === 'spread') {
                 let spreadMetric = new SpreadMetric(this.metricSpreadBy, req);
                 this.metricsService.calculateMetric(spreadMetric);
-                console.log(this.metric);
             }
-
-            // if (res) {
-            //     setTimeout(() => this.doneCalculating(), 3000);
-            // } else {
-            //     this.showMsg('danger', 'Failed Creating Dashboard!');
-            // }
         }
     }
+
+
 
     /**
      * When done calculation and results are back from the BE,
@@ -315,7 +348,10 @@ export class UsersDashboardCreatorComponent implements OnInit {
      * @returns {boolean} - valid query or not.
      */
     isQueryValid() {
+        Debugger.debug('UsersDashboardCreatorComponent.isQueryValid() - Check if the query is valud');
+
         if (!this.metric.title || this.metric.title === '') {
+            Debugger.error('Invalid Query! Metric name is either undefined or empty!');
             this.showMsg('danger', "Dashboard Name Cannot Be Empty.");
             return false;
         }
@@ -327,18 +363,21 @@ export class UsersDashboardCreatorComponent implements OnInit {
 
                 // Check that attribute was selected
                 if (!predicate.key) {
+                    Debugger.error('Invalid Query! Missing attribute at index (' + i + ',' +  j + ').');
                     this.showMsg('danger', 'One or more of the attributes are empty.');
                     return false;
                 }
 
                 // Check that predicate type was selected
                 if (!predicate.type) {
+                    Debugger.error('Invalid Query! Missing Predicate at index (' + i + ',' +  j + ').');
                     this.showMsg('danger', 'One or more of the predicates are empty.');
                     return false;
                 }
 
                 // If 'Any' was select -> No input to check.
                 if (predicate.type === PredicateType.true) {
+                    Debugger.info('Predicate type is any. no need for type check.');
                     return true;
                 }
 
@@ -426,19 +465,21 @@ export class UsersDashboardCreatorComponent implements OnInit {
     }
 
     getInputTypeByKey(i, j) {
-        let keyType;
-        this.attributesList.forEach((attr) => {
-            if (attr.name === this.metric.segments[i].predicates[j].key) {
-                keyType = attr.type;
-            }
-        });
+        if (this.attributesList) {
+            let keyType;
+            this.attributesList.forEach((attr) => {
+                if (attr.name === this.metric.segments[i].predicates[j].key) {
+                    keyType = attr.type;
+                }
+            });
 
-        if (keyType) {
-            this.metric.segments[i].predicates[j].value.type = keyType;
-            if (keyType === PredicateType.id || keyType === PredicateType.strAttr) {
-                return 'text';
-            } else {
-                return 'number';
+            if (keyType) {
+                this.metric.segments[i].predicates[j].value.type = keyType;
+                if (keyType === PredicateType.id || keyType === PredicateType.strAttr) {
+                    return 'text';
+                } else {
+                    return 'number';
+                }
             }
         }
     }

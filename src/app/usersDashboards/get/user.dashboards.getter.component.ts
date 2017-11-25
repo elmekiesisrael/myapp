@@ -1,6 +1,7 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {MetricsService} from "../../services/metricsService/metricsService";
 import * as Chartist from 'chartist';
+import {Debugger} from "../../services/debugger/debugger";
 
 declare var $:any;
 
@@ -25,11 +26,24 @@ export class UserDashboards implements OnInit {
     ngOnInit() {
         this.pathToCreatorComponent = "/users/dashboards/create/";
         this.pathToLoaderComponent = "/users/dashboards/load";
-        this.allMatrices = this.metricsService.getAllShallowMetricsList();
-        this.createSpreadMatricesData();
+
+        Debugger.info('Getting list of shallow user metrics');
+        this.metricsService.getAllShallowMetricsList().subscribe(
+            allMetrics => {
+                Debugger.info('Successfully retrieved list of shallow metrics');
+                this.allMatrices = allMetrics;
+                this.createSpreadMatricesData()
+            },
+
+            err => {
+                Debugger.error('Failed to get list of shallow metrics. Error - ' + err);
+                this.showMsg('danger', 'Failed to load user metrics.')
+            }
+        );
     }
 
     createSpreadMatricesData() {
+        Debugger.debug('UserDashboards.createSpreadMatricesData() - Creating spread metrics from retrieved shallow metrics list.');
         this.spreadMatrices = [];
 
         this.allMatrices.forEach((metric) => {
@@ -52,6 +66,32 @@ export class UserDashboards implements OnInit {
                     }],
                     labels: labels
                 });
+            }
+        });
+    }
+
+    /**
+     * Display a popup message
+     * @param status - one of these string values: ['','info','success','warning','danger'];
+     * @param message
+     */
+    showMsg(status, message) {
+        // var type = ['','info','success','warning','danger'];
+
+        let icon = 'ti-check';
+        if (status === 'danger') {
+            icon = 'ti-na';
+        }
+
+        $.notify({
+            icon: icon,
+            message: message
+        },{
+            type: status,
+            timer: 5000,
+            placement: {
+                from: 'top',
+                align: 'center'
             }
         });
     }

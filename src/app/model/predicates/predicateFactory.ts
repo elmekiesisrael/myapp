@@ -13,7 +13,7 @@ import {OrPredicate} from "./orPredicate";
 import {AndPredicate} from "./andPredicate";
 import {PredicateType} from "./predicateTypes";
 import {IDPredicate} from "./idPredicate";
-
+import {Debugger} from "../../services/debugger/debugger";
 
 export class PredicateFactory {
     static getPredicate(type: PredicateType, key: string, attribute: Attribute, dateFrom: number, dateTo: number, id: string): Predicate {
@@ -37,6 +37,7 @@ export class PredicateFactory {
 
 
     static getAttribute(type: PredicateType, value: string): Attribute {
+        Debugger.debug('PredicateFactory.getAttribute() - Returning a new attribute by type and value');
         switch (type) {
             case 'date':
             case 'string':
@@ -51,6 +52,7 @@ export class PredicateFactory {
 
 
     static getAllPredicateTypes() {
+        Debugger.debug('PredicateFactory.getAllPredicateTypes() - Returning list of all predicate types.');
         return [
             TruePredicate.getDescriptor(),
             NotPredicate.getDescriptor(),
@@ -64,6 +66,7 @@ export class PredicateFactory {
 
 
     static getPredicatesByType(type: PredicateType) {
+        Debugger.debug('PredicateFactory.getPredicatesByType() - Returning list of all predicate by a given type.');
         switch (type) {
             case PredicateType.true:
                 return [TruePredicate.getDescriptor()];
@@ -103,6 +106,8 @@ export class PredicateFactory {
     }
 
     static getLogicalOperatorPredicate(type: PredicateType, first: Predicate, second: Predicate) {
+        Debugger.debug('PredicateFactory.getLogicalOperatorPredicate() - Returning logical predicate.');
+
         if (type === PredicateType.or) {
             return new OrPredicate(first, second);
         }
@@ -116,6 +121,7 @@ export class PredicateFactory {
 
 
     static getOperations() {
+        Debugger.debug('PredicateFactory.getOperations() - Returning list of logical predicates descriptors');
         return [
             AndPredicate.getDescriptor(),
             OrPredicate.getDescriptor()

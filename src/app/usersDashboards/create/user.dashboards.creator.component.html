@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="metric">
     <div class="row">
         <div class="col-md-12">
             <div class="card dashboard">
@@ -138,8 +138,8 @@
                         <img height="80" width="80" src="assets/img/animation.gif" alt="..."/>
                     </div>
                     <div *ngIf="showResults" class="fade-in">
-                        <div><h4 class="title">Total Users: 423</h4></div>
-                        <div><h4 class="title">Query Result: 132</h4></div>
+                        <div><h4 class="title">Total Users: {{calculatedMetric.numberOfEntities}}</h4></div>
+                        <div><h4 class="title">Query Result: {{calculatedMetric.attributeQueryResult.result}}</h4></div>
                     </div>
                 </div>
             </div>
