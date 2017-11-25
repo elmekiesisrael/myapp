@@ -14,20 +14,20 @@ export class MetricsService {
         //let headers = new Headers({ 'Content-Type': 'application/json' });
         //headers.append('Accept', 'application/json');
         let options = new RequestOptions({headers: new Headers()});
-        return this.http.post(`http://localhost:8080/orm/user/metrics/calculate`, JSON.stringify(predicate), options)
+        return this.http.post('http://ormeidan.com:8080/orm/user/metrics/calculate', JSON.stringify(predicate), options)
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
 
 
     getAllShallowMetricsList() {
-        return this.http.get(`http://localhost:8080/orm/user/metrics/shallow-list`)
+        return this.http.get('http://ormeidan.com:8080/orm/user/metrics/shallow-list')
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
 
     getMetricById(id) {
-        return this.http.get(`http://localhost:8080/orm/user/metrics/id/` + id)
+        return this.http.get('http://ormeidan.com:8080/orm/user/metrics/id/' + id)
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }

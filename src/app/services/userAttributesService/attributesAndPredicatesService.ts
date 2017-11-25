@@ -22,7 +22,7 @@ export class AttributesAndPredicatesService {
     constructor(private http: Http) {}
 
     getUserAttributes() {
-        return this.http.get(`http://localhost:8080/orm/user/attributes/list`)
+        return this.http.get(`http://ormeidan.com:8080/orm/user/attributes/list`)
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
